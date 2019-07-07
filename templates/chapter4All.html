@@ -1,0 +1,68 @@
+<html>
+
+<body>
+    Menggunakan Dictionary CSV
+    <table border=1>
+        <tr>
+            <th> NPM </th>
+            <th> Nama </th>
+            <th> Kelas </th>
+        </tr>
+        {% for row in resultModeDictCsv %}
+        <tr>
+            <td> {{ row['npm'] }} </td>
+            <td> {{ row['nama'] }} </td>
+            <td> {{ row['kelas'] }} </td>
+        </tr>
+        {% endfor %}
+    </table>
+    Menggunakan List CSV
+    <table border=1>
+        <tr>
+            <th> NPM </th>
+            <th> Nama </th>
+            <th> Kelas </th>
+        </tr>
+        {% for row in resultModeListCsv %}
+        <tr>
+            <td> {{ row[0] }} </td>
+            <td> {{ row[1] }} </td>
+            <td> {{ row[2] }} </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    Menggunakan List Pandas
+    <table border=1>
+        <tr>
+            <th> NPM </th>
+            <th> Nama </th>
+            <th> Kelas </th>
+        </tr>
+        {% for index,row in resultModePandas.head().iterrows() %}
+        <tr>
+            <td> {{ row[0] }} </td>
+            <td> {{ row[1] }} </td>
+            <td> {{ row[2] }} </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    Menggunakan Dict Pandas
+    <table border=1>
+        <tr>
+            <th> NPM </th>
+            <th> Nama </th>
+            <th> Kelas </th>
+        </tr>
+        {% for index,row in resultModePandas.head().iterrows() %}
+        <tr>
+            <td> {{ row['npm'] }} </td>
+            <td> {{ row['nama'] }} </td>
+            <td> {{ row['kelas'] }} </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+
+</html>

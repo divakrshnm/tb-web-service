@@ -1,0 +1,19 @@
+<html>
+
+<body>
+    Menggunakan Dictionary CSV
+    <table border=1>
+        <tr>
+            <th> NPM </th>
+            <th> Nama </th>
+            <th> Kelas </th>
+        </tr>
+        <tr>
+            {% for row in range(3) %}
+            <td> {{ resultModeListCsv[row] }} </td>
+            {% endfor %}
+        </tr>
+    </table>
+</body>
+
+</html>
