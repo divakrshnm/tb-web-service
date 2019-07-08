@@ -6,27 +6,33 @@ superheroes = [{'name':'Batman', 'origin':'DC'}, {'name':'Superman', 'origin':'D
 
 @app.route('/chapter1', methods=['GET', 'POST'])
 def chapter1All():
-    if request.method == 'POST':
-        superhero = {'name' : request.form['name'], 'origin' : request.form['origin']}
-        superheroes.append(superhero)
-        return jsonify(superheroes)
-    else:
-        return request.args.get('name')
+    try:
+        if request.method == 'POST':
+            superhero = {'name' : request.form['name'], 'origin' : request.form['origin']}
+            superheroes.append(superhero)
+            return jsonify(superheroes)
+        else:
+            return jsonify(superheroes)
+    except Exception as e:
+        return(str(e))
 
 @app.route('/chapter1/<string:name>', methods=['GET', 'PUT', 'DELETE'])
 def chapter1One(name):
-    if request.method == 'PUT':
-        supers = [superhero for superhero in superheroes if superhero['name']==name]
-        supers[0]['name'] = request.form['name']
-        supers[0]['origin'] = request.form['origin']
-        return jsonify(superheroes)
-    elif request.method == 'DELETE':
-        supers = [superhero for superhero in superheroes if superhero['name']==name]
-        superheroes.remove(supers[0])
-        return jsonify(superheroes)
-    else:
-        supers = [superhero for superhero in superheroes if superhero['name']==name]
-        return 'Hello, {0} from {1} Universe!'.format(supers[0]['name'], supers[0]['origin'])
+    try:
+        if request.method == 'PUT':
+            supers = [superhero for superhero in superheroes if superhero['name']==name]
+            supers[0]['name'] = request.form['name']
+            supers[0]['origin'] = request.form['origin']
+            return jsonify(superheroes)
+        elif request.method == 'DELETE':
+            supers = [superhero for superhero in superheroes if superhero['name']==name]
+            superheroes.remove(supers[0])
+            return jsonify(superheroes)
+        else:
+            supers = [superhero for superhero in superheroes if superhero['name']==name]
+            return 'Hello, {0} from {1} Universe!'.format(supers[0]['name'], supers[0]['origin'])
+    except Exception as e:
+        return(str(e))
 
 #Chapter 2
 @app.route('/chapter2', methods=['POST'])
@@ -86,35 +92,45 @@ def chapter4All():
         nama = request.form['nama']
         kelas = request.form['kelas']
 
-        writeModeListCsv = csv.writer(open('listmahasiswa.csv', mode='a', newline=''))
+        writeModeListCsv = csv.writer(open('static/listmahasiswa.csv', mode='a', newline=''))
         writeModeListCsv.writerow([npm, nama, kelas])
 
         return 'Berhasil menambahkan data'
     else:
-        readerModeListCsv = csv.reader(open('listmahasiswa.csv', mode='r'))
+        readerModeListCsv = csv.reader(open('static/listmahasiswa.csv', mode='r'))
         next(readerModeListCsv, None)
-        readerModeDictCsv = csv.DictReader(open('listmahasiswa.csv', mode='r'))  
-        readerModePandas = pandas.read_csv('listmahasiswa.csv')
+        readerModeDictCsv = csv.DictReader(open('static/listmahasiswa.csv', mode='r'))  
+        readerModePandas = pandas.read_csv('static/listmahasiswa.csv')
 
         return render_template('chapter4all.html', resultModeListCsv = readerModeListCsv, resultModeDictCsv = readerModeDictCsv, resultModePandas = readerModePandas)
 
-@app.route('/chapter4/<int:param>', methods=['GET', 'PUT'])
-def chapter4One(param):
+@app.route('/chapter4/<int:npm>', methods=['GET', 'PUT'])
+def chapter4One(npm):
     if request.method == 'PUT':
-        readerModeListCsv = csv.reader(open('listmahasiswa.csv', mode='r'))
-        lines = list(readerModeListCsv)
-        lines[param] = [request.form['npm'], request.form['nama'], request.form['kelas']]
+        datas = csv.DictReader(open('static/listmahasiswa.csv', mode='r'))
+        dts = []
+        for data in datas:
+           dts.append(data)
 
-        writeModeListCsv = csv.writer(open('listmahasiswa.csv', mode='w', newline=''))
-        writeModeListCsv.writerows(lines)
+        data = [dt for dt in dts if dt['npm']==str(npm)]
+        data[0]['npm'] = str(request.form['npm'])
+        data[0]['nama'] = request.form['nama']
+        data[0]['kelas'] = request.form['kelas']
+
+        writeModeListCsv = csv.DictWriter(open('static/listmahasiswa.csv', mode='w', newline=''), dts[0].keys())
+        writeModeListCsv.writeheader()
+        writeModeListCsv.writerows(dts)
 
         return 'Berhasil mengubah data'
+        # return jsonify(dts)
     else:
-        readerModeListCsv = csv.reader(open('listmahasiswa.csv', mode='r'))
-        next(readerModeListCsv, None)
-        lines = list(readerModeListCsv)
-        return jsonify(lines[param])
-        # return render_template('chapter4One.html', resultModeListCsv = lines[param])
+        datas = csv.DictReader(open('static/listmahasiswa.csv', mode='r'))
+        dts = []
+        for data in datas:
+           dts.append(data)
+
+        data = [dt for dt in dts if dt['npm']==str(npm)]
+        return jsonify(data)
 
 #Chapter 5
 import serial
